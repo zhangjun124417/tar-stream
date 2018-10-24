@@ -1,6 +1,7 @@
 var toBuffer = require('to-buffer')
 var alloc = require('buffer-alloc')
-
+var iconvl = require('iconv-lite');
+var UTF8 = require('utf-8');
 var ZEROS = '0000000000000000000'
 var SEVENS = '7777777777777777777'
 var ZERO_OFFSET = '0'.charCodeAt(0)
@@ -147,7 +148,12 @@ var decodeOct = function (val, offset, length) {
 }
 
 var decodeStr = function (val, offset, length, encoding) {
-  return val.slice(offset, indexOf(val, 0, offset, offset + length)).toString(encoding)
+  var tmp = val.slice(offset, indexOf(val, 0, offset, offset + length));
+  if(UTF8.isNotUTF8(tmp)){
+    return iconvl.decode(tmp,'GBK').toString();
+  }else{
+    return tmp.toString();
+  }
 }
 
 var addLength = function (str) {
